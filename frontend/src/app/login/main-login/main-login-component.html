@@ -1,0 +1,21 @@
+<div id="login">
+
+  <h1><strong>Welcome.</strong> Please login.</h1>
+
+  <form novalidate [formGroup]="userForm" (ngSubmit)="login(userForm)" method="get">
+
+    <fieldset>
+
+      <p><input id="name" type="text" class="form-control" formControlName="name" placeholder="username or email"></p>
+
+      <p><input id="password" type="password" class="form-control" formControlName="password" placeholder="password"></p>
+
+      <p><a href="#">Forgot Password?</a></p>
+
+      <p><input type="submit" value="Login"></p>
+
+    </fieldset>
+
+  </form>
+
+</div> <!-- end login -->

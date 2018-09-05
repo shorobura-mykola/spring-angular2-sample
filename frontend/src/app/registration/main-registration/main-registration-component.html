@@ -1,0 +1,21 @@
+<div id="registration">
+
+  <h1><strong>Welcome.</strong> Sign Up.</h1>
+
+  <form novalidate [formGroup]="userForm" (ngSubmit)="registration(userForm)" action="javascript:void(0);" method="get">
+
+    <fieldset>
+
+      <p><input id="name" type="text" class="form-control" formControlName="name" placeholder="username"></p>
+
+      <p><input id="email" type="text" class="form-control" formControlName="email" placeholder="email"></p>
+
+      <p><input id="password" type="password" class="form-control" formControlName="password" placeholder="password"></p>
+
+      <p><input type="submit" value="Sign up"></p>
+
+    </fieldset>
+
+  </form>
+
+</div>
