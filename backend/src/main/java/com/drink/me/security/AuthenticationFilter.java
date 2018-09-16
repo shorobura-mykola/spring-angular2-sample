@@ -1,5 +1,6 @@
 package com.drink.me.security;
 
+import com.drink.me.properties.JWTProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,8 +20,8 @@ import java.io.IOException;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    @Value("${jwt.header}")
-    private String tokenHeader;
+    @Autowired
+    private JWTProperties jwtProperties;
 
     @Autowired
     private TokenUtils tokenUtils;
@@ -33,7 +34,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        String authToken = httpRequest.getHeader(tokenHeader);
+        String authToken = httpRequest.getHeader(jwtProperties.getHeader());
         if (authToken != null && !authToken.isEmpty()) {
 
             String username = this.tokenUtils.getUsernameFromToken(authToken);

@@ -1,10 +1,11 @@
 package com.drink.me.security;
 
 import com.drink.me.model.User;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.drink.me.properties.JWTProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import org.springframework.beans.factory.annotation.Value;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -15,18 +16,20 @@ import java.util.Map;
 @Component
 public class TokenUtils {
 
-    @Value("${jwt.secret}")
-    private String secret;
+    public static final String SUB = "sub";
+    public static final String CREATED = "created";
+    public static final String ROLE = "role";
+    public static final String EXPIRATION = "expiration";
 
-    @Value("${jwt.expiration}")
-    private Long expiration;
+    @Autowired
+    private JWTProperties jwtProperties;
 
     public String getUsernameFromToken(String token) {
-        return (String) this.getClaimsFromToken(token).get("sub");
+        return (String) this.getClaimsFromToken(token).get(SUB);
     }
 
     public Date getCreatedDateFromToken(String token) {
-        return new Date((Long)this.getClaimsFromToken(token).get("created"));
+        return new Date((Long)this.getClaimsFromToken(token).get(CREATED));
     }
 
     public Date getExpirationDateFromToken(String token) {
@@ -34,7 +37,7 @@ public class TokenUtils {
     }
 
     private Claims getClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(this.secret).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(jwtProperties.getSecret()).parseClaimsJws(token).getBody();
     }
 
     private Date generateCurrentDate() {
@@ -42,7 +45,7 @@ public class TokenUtils {
     }
 
     private Date generateExpirationDate() {
-        return new Date(System.currentTimeMillis() + this.expiration * 1000);
+        return new Date(System.currentTimeMillis() + jwtProperties.getExpiration() * 1000);
     }
 
     private Boolean isTokenExpired(String token) {
@@ -56,16 +59,16 @@ public class TokenUtils {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("sub", userDetails.getUsername());
-        claims.put("created", this.generateCurrentDate().getTime());
-        claims.put("role", userDetails.getAuthorities().iterator().next());
-        claims.put("expiration", this.generateExpirationDate().getTime());
+        claims.put(SUB, userDetails.getUsername());
+        claims.put(CREATED, this.generateCurrentDate().getTime());
+        claims.put(ROLE, userDetails.getAuthorities().iterator().next());
+        claims.put(EXPIRATION, this.generateExpirationDate().getTime());
         return this.generateToken(claims);
     }
 
     private String generateToken(Map<String, Object> claims) {
         return Jwts.builder().setClaims(claims).setExpiration(this.generateExpirationDate())
-                .signWith(SignatureAlgorithm.HS512, this.secret).compact();
+                .signWith(SignatureAlgorithm.HS512, jwtProperties.getSecret()).compact();
     }
 
     public Boolean canTokenBeRefreshed(String token, Date lastPasswordReset) {
@@ -75,8 +78,8 @@ public class TokenUtils {
 
     public String refreshToken(String token) {
         final Claims claims = this.getClaimsFromToken(token);
-        claims.put("created", this.generateCurrentDate());
-        claims.put("expiration", this.generateExpirationDate().getTime());
+        claims.put(CREATED, this.generateCurrentDate());
+        claims.put(EXPIRATION, this.generateExpirationDate().getTime());
         return this.generateToken(claims);
     }
 

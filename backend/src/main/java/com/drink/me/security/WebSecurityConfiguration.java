@@ -2,7 +2,6 @@ package com.drink.me.security;
 
 
 import com.drink.me.filter.WebSecurityCorsFilter;
-import com.drink.me.security.AuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
