@@ -1,8 +1,10 @@
-package com.drink.me.config;
+package com.drink.me.security;
 
 
 import com.drink.me.filter.WebSecurityCorsFilter;
+import com.drink.me.security.AuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,9 +25,13 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
+    @Qualifier("userDetailsServiceImpl")
+    private UserDetailsService userDetailsService;
+
+    @Autowired
     public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder
-                .userDetailsService(userDetailsService())
+                .userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder());
     }
 
@@ -40,10 +46,18 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+    @Bean
+    public AuthenticationFilter authenticationFilterBean() throws Exception {
+        AuthenticationFilter authenticationTokenFilter = new AuthenticationFilter();
+        authenticationTokenFilter.setAuthenticationManager(authenticationManagerBean());
+        return authenticationTokenFilter;
+    }
+
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         CookieCsrfTokenRepository.withHttpOnlyFalse();
         httpSecurity
+                .formLogin().disable()
                 .csrf()
                 .disable()
                 .exceptionHandling()
@@ -55,11 +69,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .anyRequest().permitAll();
         httpSecurity
                 .addFilterBefore(new WebSecurityCorsFilter(), UsernamePasswordAuthenticationFilter.class);
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return super.userDetailsService();
     }
 
 }

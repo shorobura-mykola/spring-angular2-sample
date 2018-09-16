@@ -3,14 +3,15 @@ package com.drink.me.controller;
 import com.drink.me.model.User;
 import com.drink.me.service.UserService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/registration")
+@RestController("/registration")
 public class RegistrationController {
 
-    private final UserService userService;
+    private UserService userService;
 
     public RegistrationController(UserService userService) {
         this.userService = userService;
@@ -18,9 +19,9 @@ public class RegistrationController {
 
     @PostMapping
     public @ResponseBody
-    ResponseEntity registration(@RequestBody User user){
+    HttpStatus registration(@RequestBody User user){
         userService.save(user);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return HttpStatus.OK;
     }
 
 }

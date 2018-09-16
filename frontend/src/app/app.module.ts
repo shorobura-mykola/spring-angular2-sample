@@ -5,10 +5,10 @@ import {AppComponent} from './app.component';
 import {routes} from './app.routes';
 import {RouterModule} from '@angular/router';
 import {UserModule} from './user/user.module';
-import {HttpModule} from '@angular/http';
 import {RegistrationModule} from './registration/registration.module';
 import {LoginModule} from './login/login.module';
 import {IndexModule} from './index/index.module';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -16,7 +16,7 @@ import {IndexModule} from './index/index.module';
   ],
   imports: [
     BrowserModule,
-    HttpModule,
+    HttpClientModule,
     RouterModule.forRoot(routes),
     IndexModule,
     UserModule,

@@ -10,14 +10,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
-    private final BCryptPasswordEncoder encoder;
+public class UserServiceImpl implements  UserService {
+
+    private UserRepository userRepository;
+    private BCryptPasswordEncoder encoder;
 
     public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder encoder) {
         this.userRepository = userRepository;
         this.encoder = encoder;
     }
+
 
     @Override
     public void save(User user) {

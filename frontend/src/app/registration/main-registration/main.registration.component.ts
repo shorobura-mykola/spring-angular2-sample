@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {User} from '../../user/main-user/user';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {Http} from '@angular/http';
 import {Router} from '@angular/router';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
   selector: 'app-main-registration-component',
@@ -13,7 +13,7 @@ export class MainRegistrationComponent implements OnInit {
   user: User = new User();
   userForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private http: Http, private router: Router) {
+  constructor(private fb: FormBuilder, private httpClient: HttpClient, private router: Router) {
 
   }
 
@@ -37,13 +37,15 @@ export class MainRegistrationComponent implements OnInit {
       email: form.value.email,
       password: form.value.password
     };
-    this.http.post('http://localhost:8080/registration', obj).subscribe(
-      result => {
-        if (result.statusText === 'OK') {
+    this.httpClient.post('http://localhost:8080/registration', obj).subscribe(
+      (result) => {
+        if (result === 'OK') {
           this.router.navigateByUrl('/');
         }
       },
-      error => console.log(error)
+      error => {
+        console.log('POST call in error', error);
+      }
     );
   }
 }
